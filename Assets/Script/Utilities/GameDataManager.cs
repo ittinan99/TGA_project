@@ -84,9 +84,6 @@ namespace TGA.GameData
             Debug.Log("================  Load GameData From Json Complete  =================");
 
             Debug.Log(skillConfig);
-
-            sceneController = SharedContext.Instance.Get<SceneController>();
-            sceneController.LoadSceneAsync("TestOnline");
         }
     }
 }
