@@ -1,0 +1,11 @@
+{
+    "skill_config":
+    {
+	   "id":"atk-01",
+       "class_type" : "Attacker",
+       "avaliable_level" : 10,
+       "previous_skill_id":"atk-00",
+       "cooldown" : 30,
+       "vfx":"atk-01-vfx"
+    }
+}
