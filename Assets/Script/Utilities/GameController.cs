@@ -43,7 +43,7 @@ namespace TGA.Gameplay
             yield return new WaitUntil(() => gameDataManager.IsIniialize);
 
             sceneController = SharedContext.Instance.Get<SceneController>();
-            sceneController.LoadSceneAsync("TestOnline");
+            sceneController.LoadSceneAsync("Mainmenu");
         }
     }
 }

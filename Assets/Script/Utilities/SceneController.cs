@@ -50,6 +50,7 @@ namespace TGA.SceneManagement
 
         public void LoadSceneAsync(string sceneName)
         {
+            Debug.Log("=================== LoadScene ======================");
             StartCoroutine(LoadScene(sceneName));
         }
 
@@ -101,7 +102,7 @@ namespace TGA.SceneManagement
             while (!asyncOperation.isDone)
             {
                 targetValue = asyncOperation.progress / 0.9f;
-                currentValue = Mathf.MoveTowards(currentValue, targetValue, 0.25f * Time.deltaTime);
+                currentValue = Mathf.MoveTowards(currentValue, targetValue, 0.75f * Time.deltaTime);
                 //loadingSlider.value = currentValue;
 
                 if (Mathf.Approximately(currentValue, 1))

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TGA.Gameplay
 {
     [CreateAssetMenu(fileName = "New Enemy", menuName = "Enemy")]
-    public class EnemyInfo : MonoBehaviour
+    public class EnemyInfo : ScriptableObject
     {
         [SerializeField]
         private string id;

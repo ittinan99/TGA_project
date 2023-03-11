@@ -83,6 +83,8 @@ namespace TGA.GameData
 
             Debug.Log("================  Load GameData From Json Complete  =================");
 
+            isInitialize = true;
+
             Debug.Log(skillConfig);
         }
     }
