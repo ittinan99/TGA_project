@@ -16,6 +16,9 @@ namespace TGA.GameData
         [JsonProperty("class_type")]
         public DarkMagicEnum ClassType;
 
+        [JsonProperty("skill_type")]
+        public SkillTypeEnum SkillType;
+
         [JsonProperty("avaliable_level")]
         public int AvaliableLevel;
 
@@ -27,6 +30,13 @@ namespace TGA.GameData
 
         [JsonProperty("vfx")]
         public string VFXPrefabId;
+    }
+
+    public enum SkillTypeEnum
+    {
+        None,
+        Active,
+        Passive
     }
 }
 

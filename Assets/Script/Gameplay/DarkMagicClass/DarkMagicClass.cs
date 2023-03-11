@@ -32,8 +32,8 @@ namespace TGA.Gameplay
         public float MaxStamina => maxStamina;
 
         [SerializeField]
-        private float maxSpeed;
-        public float MaxSpeed => maxSpeed;
+        private float speed;
+        public float Speed => speed;
     }
 
     public enum DarkMagicEnum
