@@ -28,8 +28,25 @@ namespace TGA.Gameplay
         public float MaxHealth => maxHealth;
 
         [SerializeField]
-        private float maxSpeed;
-        public float MaxSpeed => maxSpeed;
+        private float walkSpeed;
+        public float WalkSpeed => walkSpeed;
+
+        [SerializeField]
+        private float runSpeed;
+        public float RunSpeed => runSpeed;
+
+
+        [SerializeField]
+        private float attackDistance;
+        public float AttackDistance => attackDistance;
+
+        [SerializeField]
+        private float detectRange;
+        public float DetectRange => detectRange;
+
+        [SerializeField]
+        private float aggroRange;
+        public float AggroRange => aggroRange;
     }
 
     public enum EnemyTypeEnum
