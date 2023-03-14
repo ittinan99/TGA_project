@@ -41,7 +41,7 @@ public class PhotonMainMenu : MonoBehaviourPunCallbacks
     {
         MainmenuController.instance.OpenMenu("title");
         Debug.Log("Joined Lobbe");
-        PhotonNetwork.NickName = "Player "+ Random.Range(0,1000).ToString();
+        //PhotonNetwork.NickName = "Player "+ Random.Range(0,1000).ToString();
     }
 
     public void CreateRoom()
