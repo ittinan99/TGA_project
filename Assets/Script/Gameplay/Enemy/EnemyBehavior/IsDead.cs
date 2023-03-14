@@ -5,15 +5,31 @@ using TheKiwiCoder;
 
 public class IsDead : ActionNode
 {
+    private EnemyController enemyController;
     protected override void OnStart() {
+        enemyController = context.gameObject.GetComponent<EnemyController>();
+
+        if (blackboard.isInitDelegate) { return; }
+
+        enemyController.EnemyStat.OnEnemyDieCallback += OnEnemyDie;
+        enemyController.OnEnemyFreezeCallback += OnEnemyFreeze;
+
+        blackboard.isInitDelegate = true;
     }
 
     protected override void OnStop() {
     }
 
     protected override State OnUpdate() {
-        if (isDead())
+        if (blackboard.IsFreeze)
         {
+            return State.Running;
+        }
+
+        if (blackboard.IsDead)
+        {
+            enemyController.SetDieAnimation(true);
+
             return State.Failure;
         }
         else
@@ -21,21 +37,19 @@ public class IsDead : ActionNode
             return State.Success;
         }
     }
-    private bool isDead()
+
+    private void OnEnemyDie()
     {
-        float currentHealth = context.gameObject.GetComponent<EnemyController>().CurrentHealth;
+        blackboard.IsDead = true;
+        context.agent.enabled = false;
+    }
 
-        if (currentHealth <= 0 && !blackboard.isDead)
-        {
-            blackboard.isDead = true;
+    private void OnEnemyFreeze(bool status)
+    {
+        blackboard.IsFreeze = status;
 
-            //TODO : die animation
+        if (!context.agent.enabled) { return; }
 
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        context.agent.isStopped = status;
     }
 }

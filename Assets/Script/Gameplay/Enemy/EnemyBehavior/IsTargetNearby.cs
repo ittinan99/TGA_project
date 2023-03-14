@@ -18,6 +18,11 @@ public class IsTargetNearby : ActionNode
     }
 
     protected override State OnUpdate() {
+        if (blackboard.IsFreeze)
+        {
+            return State.Running;
+        }
+
         if (CheckIsPlayerNearBy())
         {
             return State.Success;

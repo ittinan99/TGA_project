@@ -11,8 +11,13 @@ namespace TheKiwiCoder {
     public class Blackboard {
 
         public Vector3 moveToPosition;
-        public bool isDead;
-        public bool isAggro;
+        public bool IsDead;
+        public bool IsFreeze;
+        public bool IsAggro;
         public GameObject Target;
+        public bool IsAttacking;
+
+
+        public bool isInitDelegate;
     }
 }

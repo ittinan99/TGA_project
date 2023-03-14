@@ -21,7 +21,7 @@ public class MoveToTarget : ActionNode
         context.agent.updateRotation = updateRotation;
         context.agent.acceleration = acceleration;
 
-        if (blackboard.isAggro)
+        if (blackboard.IsAggro)
         {
             context.agent.speed = enemyController.EnemyInfo.RunSpeed;
         }
@@ -36,6 +36,16 @@ public class MoveToTarget : ActionNode
 
     protected override State OnUpdate() {
 
+        if (blackboard.IsDead)
+        {
+            return State.Success;
+        }
+
+        if (blackboard.IsFreeze)
+        {
+            return State.Running;
+        }
+
         if (blackboard.Target == null)
         {
             return State.Success;
@@ -43,13 +53,29 @@ public class MoveToTarget : ActionNode
         else
         {
             context.agent.destination = blackboard.Target.transform.position;
-            context.gameObject.GetComponent<EnemyController>().distance = Vector3.Distance(context.transform.position, blackboard.Target.transform.position);
+            enemyController.distance = Vector3.Distance(context.transform.position, blackboard.Target.transform.position);
         }
 
         if (Vector3.Distance(context.transform.position, blackboard.Target.transform.position) < enemyController.EnemyInfo.AggroRange)
         {
-            blackboard.isAggro = true;
+            blackboard.IsAggro = true;
             context.agent.speed = enemyController.EnemyInfo.RunSpeed;
+        }
+
+        if (blackboard.IsAggro)
+        {
+            context.agent.speed = enemyController.EnemyInfo.RunSpeed;
+            enemyController.SetRunAnimation(true);
+        }
+        else
+        {
+            context.agent.speed = enemyController.EnemyInfo.WalkSpeed;
+            enemyController.SetWalkAnimation(true);
+        }
+
+        if (Vector3.Distance(context.transform.position, blackboard.Target.transform.position) <= enemyController.EnemyInfo.AttackDistance + 0.5f)
+        {
+            return State.Success;
         }
 
         if (context.agent.pathPending)

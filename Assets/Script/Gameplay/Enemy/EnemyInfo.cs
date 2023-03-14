@@ -47,6 +47,11 @@ namespace TGA.Gameplay
         [SerializeField]
         private float aggroRange;
         public float AggroRange => aggroRange;
+
+        [SerializeField]
+        private List<AnimationClip> attackAnimation;
+        public List<AnimationClip> AttackAnimation => attackAnimation;
+
     }
 
     public enum EnemyTypeEnum

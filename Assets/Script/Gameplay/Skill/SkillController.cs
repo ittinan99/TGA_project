@@ -72,9 +72,16 @@ public class SkillController : MonoBehaviour
             UseThirdSkill();
         }
 
+        UpdateInSightEnemy();
+    }
+
+    private void UpdateInSightEnemy()
+    {
         var allTarget = GameObject.FindGameObjectsWithTag("Enemy");
 
-        var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<MeshRenderer>().isVisible);
+        if (allTarget.Length == 0) { return; }
+
+        var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<EnemyController>().Renderer.isVisible);
         inSightEnemyCount = inSightTarget.Count;
     }
 
@@ -147,6 +154,8 @@ public class SkillController : MonoBehaviour
     {
         Debug.Log("Use Second Skill !!");
         SecondSkillCooldownCoroutine = StartCoroutine(SecondSkillCooldown());
+
+        useFreezeRoar();
     }
 
     public void UseThirdSkill()
@@ -156,15 +165,20 @@ public class SkillController : MonoBehaviour
 
         //TEST Curve Bullet;
 
+        useCurveBullet();
+    }
+
+    private void useCurveBullet()
+    {
         var allTarget = GameObject.FindGameObjectsWithTag("Enemy");
 
-        var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<MeshRenderer>().isVisible);
+        var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<EnemyController>().Renderer.isVisible);
 
         var enemyTarget = new List<EnemyController>();
 
         var headTarget = new List<GameObject>();
 
-        foreach(var target in inSightTarget)
+        foreach (var target in inSightTarget)
         {
             enemyTarget.Add(target.GetComponent<EnemyController>());
         }
@@ -178,5 +192,26 @@ public class SkillController : MonoBehaviour
 
         CurveBullet a = Instantiate(CurveBullet, transform.position, Quaternion.identity).GetComponent<CurveBullet>();
         a.startCurveBullet(headTarget);
+    }
+
+    private void useFreezeRoar()
+    {
+        var allTarget = GameObject.FindGameObjectsWithTag("Enemy");
+
+        var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<EnemyController>().Renderer.isVisible);
+
+        var enemyTarget = new List<EnemyController>();
+
+        foreach (var target in inSightTarget)
+        {
+            enemyTarget.Add(target.GetComponent<EnemyController>());
+        }
+
+        enemyTarget = enemyTarget.FindAll(x => x.distance < 15);
+
+        foreach (var target in enemyTarget)
+        {
+            target.FreezeEnemy(4f);
+        }
     }
 }
