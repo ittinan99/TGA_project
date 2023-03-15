@@ -8,6 +8,7 @@ using System.Linq;
 using Photon.Pun;
 using TGA.Network;
 using System;
+using System.IO;
 
 public class SkillController : MonoBehaviour
 {
@@ -201,7 +202,7 @@ public class SkillController : MonoBehaviour
             headTarget.Add(target.HeadPos);
         }
 
-        CurveBullet a = Instantiate(CurveBullet, transform.position, Quaternion.identity).GetComponent<CurveBullet>();
+        CurveBullet a = PhotonNetwork.Instantiate(Path.Combine("Photonprefabs", "CurveBullet"), transform.position, Quaternion.identity).GetComponent<CurveBullet>();
         a.startCurveBullet(headTarget);
     }
 
