@@ -44,6 +44,7 @@ public class EnemyController : MonoBehaviour
     [Space(10)]
 
     [Header("Debug Value")]
+    public GameObject target;
     public float distance;
 
     public delegate void OnEnemyFreeze(bool status);
@@ -74,6 +75,8 @@ public class EnemyController : MonoBehaviour
 
         //Guid = testGuid;
 
+        if (!PhotonNetwork.LocalPlayer.IsMasterClient) { return; }
+
         pv.RPC("RPC_SetupGuid", RpcTarget.All, testGuid.ToString());
     }
 
@@ -86,7 +89,7 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
-        
+        distance = Vector3.Distance(transform.position, target.transform.position);
     }
 
     #region Animation

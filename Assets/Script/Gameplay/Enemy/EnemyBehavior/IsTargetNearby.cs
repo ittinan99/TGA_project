@@ -41,6 +41,7 @@ public class IsTargetNearby : ActionNode
             if(blackboard.Target != nearestTarget)
             {
                 blackboard.Target = nearestTarget;
+                enemyController.target = nearestTarget;
                 Debug.Log("Enemy Spotted");
             }
             return true;

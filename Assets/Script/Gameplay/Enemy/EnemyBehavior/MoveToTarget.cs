@@ -53,7 +53,6 @@ public class MoveToTarget : ActionNode
         else
         {
             context.agent.destination = blackboard.Target.transform.position;
-            enemyController.distance = Vector3.Distance(context.transform.position, blackboard.Target.transform.position);
         }
 
         if (Vector3.Distance(context.transform.position, blackboard.Target.transform.position) < enemyController.EnemyInfo.AggroRange)
