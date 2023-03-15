@@ -208,6 +208,8 @@ public class SkillController : MonoBehaviour
 
     private void useCurveBullet()
     {
+        if (!pv.IsMine) { return; }
+
         var allTarget = GameObject.FindGameObjectsWithTag("Enemy");
 
         var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<EnemyController>().Renderer.isVisible);
