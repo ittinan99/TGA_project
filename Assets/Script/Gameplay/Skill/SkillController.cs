@@ -204,7 +204,8 @@ public class SkillController : MonoBehaviour
             headTarget.Add(target.HeadPos);
         }
 
-        CurveBullet a = PhotonNetwork.Instantiate(Path.Combine("Photonprefabs", "CurveBullet"), transform.position, Quaternion.identity).GetComponent<CurveBullet>();
+        //CurveBullet a = PhotonNetwork.Instantiate(Path.Combine("Photonprefabs", "CurveBullet"), transform.position, Quaternion.identity).GetComponent<CurveBullet>();
+        CurveBullet a = Instantiate(CurveBullet, transform.position, Quaternion.identity).GetComponent<CurveBullet>();
         a.startCurveBullet(headTarget);
     }
 

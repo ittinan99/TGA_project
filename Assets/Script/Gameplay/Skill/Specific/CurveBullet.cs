@@ -50,7 +50,8 @@ public class CurveBullet : MonoBehaviour
         }
 
         curveBulletCoroutine = null;
-        PhotonNetwork.Destroy(this.gameObject);
+        //PhotonNetwork.Destroy(this.gameObject);
+        Destroy(this.gameObject);
     }
 
     private void OnHitCurrentTarget(GameObject gameObject)

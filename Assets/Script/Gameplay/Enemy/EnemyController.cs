@@ -89,6 +89,8 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
+        if (target == null) { return; }
+
         distance = Vector3.Distance(transform.position, target.transform.position);
     }
 
