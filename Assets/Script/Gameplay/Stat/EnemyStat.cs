@@ -67,9 +67,6 @@ public class EnemyStat : AttackTarget, IDamagable<float>
     [PunRPC]
     void RPC_TakeDamage(float damage)
     {
-        if (!pv.IsMine)
-            return;
-
         currentHealth -= damage;
 
         if (currentHealth <= 0)

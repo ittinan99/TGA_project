@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
 using TheKiwiCoder;
+using System;
 
 public class EnemyController : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private EnemyInfo enemyInfo;
     public EnemyInfo EnemyInfo => enemyInfo;
+
+    public Guid Guid; //TODO : add to custom property
     [Space(10)]
 
     [Header("EnemyStat")]

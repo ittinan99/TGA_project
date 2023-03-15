@@ -5,6 +5,9 @@ using TGA.GameData;
 using TGA.Gameplay;
 using UnityEngine.UI;
 using System.Linq;
+using Photon.Pun;
+using TGA.Network;
+using System;
 
 public class SkillController : MonoBehaviour
 {
@@ -49,10 +52,17 @@ public class SkillController : MonoBehaviour
 
     [SerializeField]
     private int inSightEnemyCount;
+    private List<GameObject> EnemyList;
 
+    PhotonView pv;
+
+    private void Awake()
+    {
+        pv = GetComponent<PhotonView>();
+    }
     void Start()
     {
-        
+       
     }
 
     void Update()
@@ -78,6 +88,8 @@ public class SkillController : MonoBehaviour
     private void UpdateInSightEnemy()
     {
         var allTarget = GameObject.FindGameObjectsWithTag("Enemy");
+
+        EnemyList = new List<GameObject>(allTarget);
 
         if (allTarget.Length == 0) { return; }
 
@@ -168,17 +180,19 @@ public class SkillController : MonoBehaviour
         useCurveBullet();
     }
 
-    private void useCurveBullet()
+    [PunRPC]
+    void RPC_useCurveBullet(string data)
     {
-        var allTarget = GameObject.FindGameObjectsWithTag("Enemy");
+        var verifyData = BaseNetworkData.Deserialize<TargetEnemyData>(data);
+        var targetEnemyGuidList = verifyData.TargetEnemyList;
 
-        var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<EnemyController>().Renderer.isVisible);
+        var targetEnemyList = EnemyList.FindAll(x => targetEnemyGuidList.Contains(x.GetComponent<EnemyController>().Guid));
 
         var enemyTarget = new List<EnemyController>();
 
         var headTarget = new List<GameObject>();
 
-        foreach (var target in inSightTarget)
+        foreach (var target in targetEnemyList)
         {
             enemyTarget.Add(target.GetComponent<EnemyController>());
         }
@@ -192,6 +206,43 @@ public class SkillController : MonoBehaviour
 
         CurveBullet a = Instantiate(CurveBullet, transform.position, Quaternion.identity).GetComponent<CurveBullet>();
         a.startCurveBullet(headTarget);
+    }
+
+    private void useCurveBullet()
+    {
+        //var allTarget = GameObject.FindGameObjectsWithTag("Enemy");
+
+        //var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<EnemyController>().Renderer.isVisible);
+
+        //var enemyTarget = new List<EnemyController>();
+
+        //var headTarget = new List<GameObject>();
+
+        //foreach (var target in inSightTarget)
+        //{
+        //    enemyTarget.Add(target.GetComponent<EnemyController>());
+        //}
+
+        //enemyTarget = enemyTarget.OrderBy(x => x.distance).ToList();
+
+        //foreach (var target in enemyTarget)
+        //{
+        //    headTarget.Add(target.HeadPos);
+        //}
+
+        //CurveBullet a = Instantiate(CurveBullet, transform.position, Quaternion.identity).GetComponent<CurveBullet>();
+        //a.startCurveBullet(headTarget);
+
+        var enemyGuidList = new List<Guid>();
+
+        foreach(var enemy in EnemyList)
+        {
+            enemyGuidList.Add(enemy.GetComponent<EnemyController>().Guid);
+        }
+
+        var data = new TargetEnemyData(enemyGuidList).Serialize();
+
+        pv.RPC("RPC_useCurveBullet", RpcTarget.All, data);
     }
 
     private void useFreezeRoar()
