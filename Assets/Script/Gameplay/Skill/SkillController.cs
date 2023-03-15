@@ -197,8 +197,6 @@ public class SkillController : MonoBehaviour
             enemyTarget.Add(target.GetComponent<EnemyController>());
         }
 
-        enemyTarget = enemyTarget.OrderBy(x => x.distance).ToList();
-
         foreach (var target in enemyTarget)
         {
             headTarget.Add(target.HeadPos);
@@ -210,20 +208,20 @@ public class SkillController : MonoBehaviour
 
     private void useCurveBullet()
     {
-        //var allTarget = GameObject.FindGameObjectsWithTag("Enemy");
+        var allTarget = GameObject.FindGameObjectsWithTag("Enemy");
 
-        //var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<EnemyController>().Renderer.isVisible);
+        var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<EnemyController>().Renderer.isVisible);
 
-        //var enemyTarget = new List<EnemyController>();
+        var enemyTarget = new List<EnemyController>();
 
-        //var headTarget = new List<GameObject>();
+        var headTarget = new List<GameObject>();
 
-        //foreach (var target in inSightTarget)
-        //{
-        //    enemyTarget.Add(target.GetComponent<EnemyController>());
-        //}
+        foreach (var target in inSightTarget)
+        {
+            enemyTarget.Add(target.GetComponent<EnemyController>());
+        }
 
-        //enemyTarget = enemyTarget.OrderBy(x => x.distance).ToList();
+        enemyTarget = enemyTarget.OrderBy(x => x.distance).ToList();
 
         //foreach (var target in enemyTarget)
         //{
@@ -235,9 +233,9 @@ public class SkillController : MonoBehaviour
 
         var enemyGuidList = new List<Guid>();
 
-        foreach(var enemy in EnemyList)
+        foreach(var enemy in enemyTarget)
         {
-            enemyGuidList.Add(enemy.GetComponent<EnemyController>().Guid);
+            enemyGuidList.Add(enemy.Guid);
         }
 
         var data = new TargetEnemyData(enemyGuidList).Serialize();
