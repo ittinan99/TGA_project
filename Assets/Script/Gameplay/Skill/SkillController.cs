@@ -63,7 +63,10 @@ public class SkillController : MonoBehaviour
     }
     void Start()
     {
-       
+       if (!pv.IsMine)
+        {
+            this.enabled = false;
+        }
     }
 
     void Update()
