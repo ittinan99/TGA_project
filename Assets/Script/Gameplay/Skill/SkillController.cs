@@ -186,15 +186,14 @@ public class SkillController : MonoBehaviour
         var verifyData = BaseNetworkData.Deserialize<TargetEnemyData>(data);
         var targetEnemyGuidList = verifyData.TargetEnemyList;
 
-        var targetEnemyList = EnemyList.FindAll(x => targetEnemyGuidList.Contains(x.GetComponent<EnemyController>().Guid));
-
         var enemyTarget = new List<EnemyController>();
 
         var headTarget = new List<GameObject>();
 
-        foreach (var target in targetEnemyList)
+        foreach(var enemyGuid in targetEnemyGuidList)
         {
-            enemyTarget.Add(target.GetComponent<EnemyController>());
+            var enemy = EnemyList.Find(x => x.GetComponent<EnemyController>().Guid == enemyGuid);
+            enemyTarget.Add(enemy.GetComponent<EnemyController>());
         }
 
         foreach (var target in enemyTarget)

@@ -48,15 +48,42 @@ public class EnemyController : MonoBehaviour
 
     public delegate void OnEnemyFreeze(bool status);
     public OnEnemyFreeze OnEnemyFreezeCallback;
+    private PhotonView pv;
+
+    private void Awake()
+    {
+        pv = GetComponent<PhotonView>();
+        setupVariable();
+    }
 
     void Start()
     {
-        setupVariable();
+
     }
 
     void setupVariable()
     {
         enemyStat.SetupVariable(enemyInfo.MaxHealth);
+
+        setupGuid();
+    }
+
+    void setupGuid()
+    {
+        var testGuid = Guid.NewGuid();
+
+        //Guid = testGuid;
+
+        pv.RPC("RPC_SetupGuid", RpcTarget.All, testGuid.ToString());
+    }
+
+    [PunRPC]
+    void RPC_SetupGuid(string guidString)
+    {
+        if (!pv.IsMine) { return; }
+
+        Guid = new Guid(guidString);
+        Debug.Log($"{gameObject.name} : {Guid}");
     }
 
     void Update()
