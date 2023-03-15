@@ -59,7 +59,7 @@ public class CurveBullet : MonoBehaviour
 
         Debug.Log("hit current target");
 
-        gameObject.GetComponent<EnemyStat>().reduceHealth(100);
+        gameObject.GetComponent<AttackTarget>().receiveAttack(100);
 
         isHitTarget = true;
         followProjectile.OnTriggerEnterObjectCallback -= OnHitCurrentTarget;

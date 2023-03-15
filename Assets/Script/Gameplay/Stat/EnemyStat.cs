@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using TGA.Utilities;
 using TGA.Gameplay;
+using Photon.Pun;
 
 public class EnemyStat : AttackTarget, IDamagable<float>
 {
@@ -16,6 +17,8 @@ public class EnemyStat : AttackTarget, IDamagable<float>
 
     public delegate void OnEnemyDie();
     public OnEnemyDie OnEnemyDieCallback;
+
+    PhotonView pv;
 
     public float CurrentHealth
     {
@@ -31,7 +34,7 @@ public class EnemyStat : AttackTarget, IDamagable<float>
 
     private void Awake()
     {
-        
+        pv = GetComponent<PhotonView>();
     }
 
     public void SetupVariable(float maxHealth)
@@ -58,6 +61,20 @@ public class EnemyStat : AttackTarget, IDamagable<float>
 
     public override void receiveAttack(float damage)
     {
-        reduceHealth(damage);
+        pv.RPC("RPC_TakeDamage", RpcTarget.All, damage);
+    }
+
+    [PunRPC]
+    void RPC_TakeDamage(float damage)
+    {
+        if (!pv.IsMine)
+            return;
+
+        currentHealth -= damage;
+
+        if (currentHealth <= 0)
+        {
+            OnEnemyDieCallback?.Invoke();
+        }
     }
 }

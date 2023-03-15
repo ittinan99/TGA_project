@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TGA.Gameplay;
 using UnityEngine;
 using UnityEngine.AI;
+using Photon.Pun;
+using TheKiwiCoder;
 
 public class EnemyController : MonoBehaviour
 {
@@ -31,6 +33,11 @@ public class EnemyController : MonoBehaviour
     [Header("Animation")]
     [SerializeField]
     private Animator animController;
+    [Space(10)]
+
+    [Header("BehaviorTree")]
+    [SerializeField]
+    private BehaviourTreeRunner btr;
     [Space(10)]
 
     [Header("Debug Value")]
