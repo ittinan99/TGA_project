@@ -80,8 +80,6 @@ public class EnemyController : MonoBehaviour
     [PunRPC]
     void RPC_SetupGuid(string guidString)
     {
-        if (!pv.IsMine) { return; }
-
         Guid = new Guid(guidString);
         Debug.Log($"{gameObject.name} : {Guid}");
     }

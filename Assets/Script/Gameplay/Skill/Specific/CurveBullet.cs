@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class CurveBullet : MonoBehaviour
 {
@@ -49,7 +50,7 @@ public class CurveBullet : MonoBehaviour
         }
 
         curveBulletCoroutine = null;
-        Destroy(this.gameObject);
+        PhotonNetwork.Destroy(this.gameObject);
     }
 
     private void OnHitCurrentTarget(GameObject gameObject)
