@@ -63,14 +63,15 @@ public class SkillController : MonoBehaviour
     }
     void Start()
     {
-       if (!pv.IsMine)
-        {
-            this.enabled = false;
-        }
+
     }
 
     void Update()
     {
+        UpdateInSightEnemy();
+
+        if (!pv.IsMine) { return; }
+
         if (Input.GetKeyDown(firstSkillButton) && !isFirstSkillOnCooldown)
         {
             UseFirstSkill();
@@ -85,8 +86,6 @@ public class SkillController : MonoBehaviour
         {
             UseThirdSkill();
         }
-
-        UpdateInSightEnemy();
     }
 
     private void UpdateInSightEnemy()
