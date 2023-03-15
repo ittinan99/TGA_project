@@ -68,6 +68,7 @@ public class AttackTargetPattern : ActionNode
     private IEnumerator attackingCoroutine(float length)
     {
         enemyController.StopMoving();
+        enemyController.IsAttacking = true;
         
         if (context.agent.enabled)
         {
@@ -83,6 +84,7 @@ public class AttackTargetPattern : ActionNode
 
         enemyController.SetRootNodeStatus(false);
         enemyController.StartMoving();
+        enemyController.IsAttacking = false;
 
         if (context.agent.enabled)
         {

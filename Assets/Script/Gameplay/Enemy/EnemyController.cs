@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TGA.Gameplay;
 using UnityEngine;
@@ -43,9 +43,22 @@ public class EnemyController : MonoBehaviour
     private BehaviourTreeRunner btr;
     [Space(10)]
 
+    [Header("collider")]
+    [SerializeField]
+    private List<EnemyBoxCollider> hurtBoxColliderList;
+
+    [SerializeField]
+    private List<Collider> handColliderList;
+
+    [SerializeField]
+    private List<Collider> footColliderList;
+    [Space(10)]
+
     [Header("Debug Value")]
     public GameObject target;
     public float distance;
+
+    public bool IsAttacking;
 
     public delegate void OnEnemyFreeze(bool status);
     public OnEnemyFreeze OnEnemyFreezeCallback;
@@ -65,6 +78,13 @@ public class EnemyController : MonoBehaviour
     void setupVariable()
     {
         enemyStat.SetupVariable(enemyInfo.MaxHealth);
+
+        if (hurtBoxColliderList.Count <= 0) { return; }
+
+        foreach (EnemyBoxCollider enemyBoxCollider in hurtBoxColliderList)
+        {
+            enemyBoxCollider.onTriggerEnter.AddListener(OnHurtBoxTriggerEnter);
+        }
 
         setupGuid();
     }
@@ -92,6 +112,17 @@ public class EnemyController : MonoBehaviour
         if (target == null) { return; }
 
         distance = Vector3.Distance(transform.position, target.transform.position);
+    }
+
+    private void OnHurtBoxTriggerEnter(Collider col, GameObject gameObject)
+    {
+        if (!col.CompareTag("Player")) { return; }
+
+        if (!IsAttacking) { return; }
+
+        Debug.Log($"{col.gameObject.name} โดนตี เพราะ โดน {gameObject}");
+
+        col.gameObject.GetComponent<IDamageable>()?.TakeDamage(10);
     }
 
     #region Animation
@@ -155,6 +186,40 @@ public class EnemyController : MonoBehaviour
         return animController.GetCurrentAnimatorStateInfo(0).IsName(name);
     }
 
+    #endregion
+
+    #region AnimationEvent
+    public void EnableHandCollider()
+    {
+        foreach(var handCollider in handColliderList)
+        {
+            handCollider.enabled = true;
+        }
+    }
+
+    public void DisableHandCollider()
+    {
+        foreach (var handCollider in handColliderList)
+        {
+            handCollider.enabled = false;
+        }
+    }
+
+    public void EnableFootCollider()
+    {
+        foreach (var footCollider in footColliderList)
+        {
+            footCollider.enabled = false;
+        }
+    }
+
+    public void DisableFootCollider()
+    {
+        foreach (var footCollider in footColliderList)
+        {
+            footCollider.enabled = true;
+        }
+    } 
     #endregion
 
     public void FreezeEnemy(float duration)
