@@ -8,9 +8,13 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PlayerController : MonoBehaviourPunCallbacks,IDamageable
 {
+    public enum EnumStateAnimation {Idle,Walk,Run }
+    public EnumStateAnimation stateAnimation;
+
     [SerializeField] Image healthbarImage;
     [SerializeField] GameObject ui;
     [SerializeField] GameObject skillUI;
+    [SerializeField] GameObject playerModel;
 
     [SerializeField] GameObject cameraHolder;
 
@@ -26,7 +30,7 @@ public class PlayerController : MonoBehaviourPunCallbacks,IDamageable
     int previousitemIndex = -1;
 
     float verticalLookRotation;
-    [SerializeField] bool grounded;
+    bool grounded;
     Vector3 smoothMoveVelocity;
     Vector3 moveAmount;
 
@@ -38,10 +42,14 @@ public class PlayerController : MonoBehaviourPunCallbacks,IDamageable
 
     PlayerManager playerManager;
 
+    Animator animator;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         pv= GetComponent<PhotonView>();
+
+        animator = GetComponentInChildren<Animator>();
 
         Cursor.lockState = CursorLockMode.Locked;
         playerManager = PhotonView.Find((int)pv.InstantiationData[0]).GetComponent<PlayerManager>();
@@ -52,6 +60,14 @@ public class PlayerController : MonoBehaviourPunCallbacks,IDamageable
         if (pv.IsMine)
         {
             EquipItem(0);
+            //Destroy(playerModel);
+
+            var renderer = playerModel.transform.GetComponentsInChildren<Renderer>();
+
+            foreach (var rend in renderer)
+            {
+                rend.enabled = false;
+            }
         }
         else
         {
@@ -65,14 +81,17 @@ public class PlayerController : MonoBehaviourPunCallbacks,IDamageable
 
     private void Update()
     {
+
         if (!pv.IsMine)
             return;
 
+        PlayAnimation(stateAnimation.ToString());
+        CheckMoving(moveAmount);
         look();
         Move(); 
         jump();
 
-        for(int i = 0; i < items.Length; i++)
+        for (int i = 0; i < items.Length; i++)
         {
             if (Input.GetKeyDown((i + 1).ToString()))
             {
@@ -113,7 +132,41 @@ public class PlayerController : MonoBehaviourPunCallbacks,IDamageable
         {
             Die();
         }
-    } 
+    }
+
+    
+    string previousStateAnimation = "";
+    string currentStateAnimation;
+    void PlayAnimation(string _stateAnimation)
+    {
+        currentStateAnimation = _stateAnimation;
+
+        if (currentStateAnimation != previousStateAnimation)
+        {
+            animator.SetBool(currentStateAnimation, true);
+            animator.SetBool(previousStateAnimation, false);
+
+            previousStateAnimation = currentStateAnimation;
+        }
+        else { animator.SetBool(currentStateAnimation, true); }
+
+        //pv.RPC("RPC_PlayAnimation", RpcTarget.All, _stateAnimation);
+    }
+
+    [PunRPC]
+    void RPC_PlayAnimation(string _stateAnimation)
+    {
+        currentStateAnimation = _stateAnimation;
+
+        if (currentStateAnimation != previousStateAnimation)
+        {
+            animator.SetBool(currentStateAnimation, true);
+            animator.SetBool(previousStateAnimation, false);
+
+            previousStateAnimation = currentStateAnimation;
+        }
+        else { animator.SetBool(currentStateAnimation, true); }
+    }
 
     void look()
     {
@@ -129,15 +182,39 @@ public class PlayerController : MonoBehaviourPunCallbacks,IDamageable
     {
         Vector3 moveDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
 
-        moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * (Input.GetKey(KeyCode.LeftShift) ? sprinntSpeed : walkSpeed), ref smoothMoveVelocity, smoothTime);      
+        moveAmount = Vector3.SmoothDamp(moveAmount, moveDir * (Input.GetKey(KeyCode.LeftShift) ? sprinntSpeed : walkSpeed), ref smoothMoveVelocity, smoothTime);
+
+        //Debug.Log("moveDir : " + moveDir);
+        //Debug.Log("moveAmount : " + moveAmount);
+
+        
     }
 
+    void CheckMoving(Vector3 move)
+    {
+        if ((move.x > 0.5f || move.x < -0.5f)||(move.y>0.5 || move.y < -0.5f )|| (move.z > 0.5f || move.z < - 0.5f))
+        {
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                stateAnimation = PlayerController.EnumStateAnimation.Run;
+                return;
+            }
+            stateAnimation = PlayerController.EnumStateAnimation.Walk;
+            return;
+        }
+        else { stateAnimation= PlayerController.EnumStateAnimation.Idle; }
+
+        Debug.Log(move);
+    }
 
     void jump()
     {
         if (Input.GetKeyDown(KeyCode.Space) && grounded)
         {
             rb.AddForce(transform.up * jumpForce);
+
+            animator.SetTrigger("Jump");
+            //animator.ResetTrigger("Jump");
         }
     }
 
