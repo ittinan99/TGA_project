@@ -24,9 +24,6 @@ Shader "Hovl/Particles/LightGlow"
 		Tags{ "RenderType" = "Transparent"  "Queue" = "Transparent+0" "IgnoreProjector" = "True" "IsEmissive" = "true"  }
 		Cull Off
 		CGPROGRAM
-		#ifndef UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX
-		#define UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input)
-		#endif
 		#include "UnityPBSLighting.cginc"
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
@@ -104,8 +101,6 @@ Shader "Hovl/Particles/LightGlow"
 
 		void surf( Input i , inout SurfaceOutputCustomLightingCustom o )
 		{
-			UNITY_SETUP_INSTANCE_ID( i );
-			UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( i );
 			o.SurfInput = i;
 			float2 appendResult21 = (float2(_SpeedMainTexUVNoiseZW.x , _SpeedMainTexUVNoiseZW.y));
 			float2 uv0_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
