@@ -263,6 +263,32 @@ public class SkillController : MonoBehaviour
 
         enemyTarget = enemyTarget.FindAll(x => x.distance < 15);
 
+        var enemyGuidList = new List<Guid>();
+
+        foreach (var enemy in enemyTarget)
+        {
+            enemyGuidList.Add(enemy.Guid);
+        }
+
+        var data = new TargetEnemyData(enemyGuidList).Serialize();
+
+        pv.RPC("RPC_useFreezeRoar", RpcTarget.All, data);
+    }
+
+    [PunRPC]
+    void RPC_useFreezeRoar(string data)
+    {
+        var verifyData = BaseNetworkData.Deserialize<TargetEnemyData>(data);
+        var targetEnemyGuidList = verifyData.TargetEnemyList;
+
+        var enemyTarget = new List<EnemyController>();
+
+        foreach (var enemyGuid in targetEnemyGuidList)
+        {
+            var enemy = EnemyList.Find(x => x.GetComponent<EnemyController>().Guid == enemyGuid);
+            enemyTarget.Add(enemy.GetComponent<EnemyController>());
+        }
+
         foreach (var target in enemyTarget)
         {
             target.FreezeEnemy(4f);
