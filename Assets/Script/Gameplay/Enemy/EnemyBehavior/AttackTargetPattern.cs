@@ -26,7 +26,7 @@ public class AttackTargetPattern : ActionNode
             attackCoroutine = coroutineHelper.Play(attackingCoroutine(currentAnimationClip.length));
             blackboard.IsAttacking = true;
 
-            Debug.Log($"ATTACK TARGET WITH {currentAnimationClip.name}");
+            //Debug.Log($"ATTACK TARGET WITH {currentAnimationClip.name}");
         }  
     }
 
@@ -68,21 +68,27 @@ public class AttackTargetPattern : ActionNode
     private IEnumerator attackingCoroutine(float length)
     {
         enemyController.StopMoving();
+        enemyController.IsAttacking = true;
         
         if (context.agent.enabled)
         {
             context.agent.isStopped = true;
         }
 
-        yield return new WaitForSeconds(0.25f);
-
         enemyController.SetRootNodeStatus(true);
         enemyController.PlayAnimation(currentAnimationClip);
 
-        yield return new WaitForSeconds(length);
+        var timer = 0f;
+
+        while(timer < length)
+        {
+            yield return new WaitUntil(() => !blackboard.IsFreeze);
+            timer += Time.deltaTime;
+        }
 
         enemyController.SetRootNodeStatus(false);
         enemyController.StartMoving();
+        enemyController.IsAttacking = false;
 
         if (context.agent.enabled)
         {
