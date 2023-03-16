@@ -52,6 +52,9 @@ public class SkillController : MonoBehaviour
     private GameObject CurveBullet;
 
     [SerializeField]
+    private GameObject FreezeRoarVFX;
+
+    [SerializeField]
     private int inSightEnemyCount;
     private List<GameObject> EnemyList;
 
@@ -293,5 +296,16 @@ public class SkillController : MonoBehaviour
         {
             target.FreezeEnemy(4f);
         }
+
+        StartCoroutine(ShowFreezeRoarVFX());
+    }
+
+    IEnumerator ShowFreezeRoarVFX()
+    {
+        GameObject b = Instantiate(FreezeRoarVFX, transform.position, transform.rotation);
+
+        yield return new WaitForSeconds(4f);
+
+        Destroy(b.gameObject);
     }
 }

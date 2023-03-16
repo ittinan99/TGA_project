@@ -13,6 +13,7 @@ public class IsDead : ActionNode
 
         enemyController.EnemyStat.OnEnemyDieCallback += OnEnemyDie;
         enemyController.OnEnemyFreezeCallback += OnEnemyFreeze;
+        enemyController.UpdateEnemySpeedCallback += UpdateEnemySpeed;
 
         blackboard.isInitDelegate = true;
     }
@@ -51,5 +52,10 @@ public class IsDead : ActionNode
         if (!context.agent.enabled) { return; }
 
         context.agent.isStopped = status;
+    }
+
+    private void UpdateEnemySpeed(float speed)
+    {
+        context.agent.speed = speed;
     }
 }

@@ -62,6 +62,10 @@ public class EnemyController : MonoBehaviour
 
     public delegate void OnEnemyFreeze(bool status);
     public OnEnemyFreeze OnEnemyFreezeCallback;
+
+    public delegate void UpdateEnemySpeed(float speed);
+    public UpdateEnemySpeed UpdateEnemySpeedCallback;
+
     private PhotonView pv;
 
     private void Awake()
@@ -78,6 +82,7 @@ public class EnemyController : MonoBehaviour
     void setupVariable()
     {
         enemyStat.SetupVariable(enemyInfo.MaxHealth);
+        SetAnimationSpeed(1f);
 
         if (hurtBoxColliderList.Count <= 0) { return; }
 
@@ -181,6 +186,11 @@ public class EnemyController : MonoBehaviour
         animController.enabled = status;
     }
 
+    public void SetAnimationSpeed(float speed)
+    {
+        animController.SetFloat("multiplier",speed);
+    }
+
     public bool IsCurrentAnimationStateIsName(string name)
     {
         return animController.GetCurrentAnimatorStateInfo(0).IsName(name);
@@ -229,11 +239,25 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator FreezeEnemyFor(float duration)
     {
+        var timer = 2f;
+        var multiplier = timer;
+
+        while(timer > 0f)
+        {
+            timer -= Time.deltaTime;
+            SetAnimationSpeed(timer / multiplier);
+            UpdateEnemySpeedCallback?.Invoke((timer / multiplier) * enemyInfo.RunSpeed);
+            yield return null;
+        }
+
         SetAnimatorStatus(false);
+      
         OnEnemyFreezeCallback?.Invoke(true);
 
         yield return new WaitForSeconds(duration);
 
+        UpdateEnemySpeedCallback?.Invoke(enemyInfo.RunSpeed);
+        SetAnimationSpeed(1f);
         SetAnimatorStatus(true);
         OnEnemyFreezeCallback?.Invoke(false);
     }
