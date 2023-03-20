@@ -5,107 +5,118 @@ using TGA.GameData;
 using Photon.Pun;
 using System.IO;
 
-public class EnemySpawnManager : MonoBehaviour
+namespace TGA.Gameplay
 {
-    public EnemySpawnerInfo enemySpawnerConfig;
-
-    [SerializeField]
-    private List<GameObject> spawnPosList;
-
-    public float preparingTime;
-
-    float currentWavetimer = 0f;
-    int currentWaveEnemyAmount = 0;
-    int enemyDieAmount = 0;
-
-    bool isInit;
-
-    bool isPreparing;
-
-    int waveAmount;
-    int currentWave;
-    WaveInfo currentWaveInfo;
-
-    private Coroutine spawnEnemyCoroutine;
-
-    PhotonView PV;
-
-    private void Awake()
+    public class EnemySpawnManager : MonoBehaviour
     {
-        PV = GetComponent<PhotonView>();
-    }
+        public EnemySpawnerInfo enemySpawnerConfig;
 
-    void Start()
-    {
-        if (!PhotonNetwork.LocalPlayer.IsMasterClient) { return; }
+        [SerializeField]
+        private List<GameObject> spawnPosList;
 
-        isInit = true;
-        SetupAndStartSpawner();
-    }
+        [SerializeField]
+        private RandomBuffController randomBuffController;
 
-    void Update()
-    {
-        if (!isInit) { return; }
+        public float preparingTime;
 
-        if (!isPreparing) { return; }
+        float currentWavetimer = 0f;
+        int currentWaveEnemyAmount = 0;
+        int enemyDieAmount = 0;
 
-        currentWavetimer += Time.deltaTime;
-    }
+        bool isInit;
 
-    void SetupAndStartSpawner()
-    {
-        waveAmount = enemySpawnerConfig.waveInfos.Count;
-        currentWave = 0;
-        enemyDieAmount = 0;
+        public bool IsPreparing;
 
-        spawnEnemyCoroutine = StartCoroutine(StartSpawnEnemyByWave());
-    }
+        int waveAmount;
+        int currentWave;
+        WaveInfo currentWaveInfo;
 
-    IEnumerator StartSpawnEnemyByWave()
-    {
-        while(currentWave < waveAmount)
+        private Coroutine spawnEnemyCoroutine;
+
+        PhotonView PV;
+
+        private void Awake()
         {
-            currentWaveInfo = enemySpawnerConfig.waveInfos[currentWave];
-            currentWaveEnemyAmount = currentWaveInfo.EnemyWaveAmount;
+            PV = GetComponent<PhotonView>();
+        }
 
-            foreach (var spawnInfo in currentWaveInfo.SpawnInfos)
+        void Start()
+        {
+            isInit = true;
+
+            randomBuffController.Initialize(this);
+
+            if (!PhotonNetwork.LocalPlayer.IsMasterClient) { return; }
+            SetupAndStartSpawner();
+        }
+
+        void Update()
+        {
+            if (!isInit) { return; }
+
+            if (!IsPreparing) { return; }
+
+            currentWavetimer += Time.deltaTime;
+        }
+
+        void SetupAndStartSpawner()
+        {
+            waveAmount = enemySpawnerConfig.waveInfos.Count;
+            currentWave = 0;
+            enemyDieAmount = 0;
+
+            spawnEnemyCoroutine = StartCoroutine(StartSpawnEnemyByWave());
+        }
+
+        IEnumerator StartSpawnEnemyByWave()
+        {
+            while (currentWave < waveAmount)
             {
-                SpawnEnemy(spawnInfo);
+                currentWaveInfo = enemySpawnerConfig.waveInfos[currentWave];
+                currentWaveEnemyAmount = currentWaveInfo.EnemyWaveAmount;
 
-                yield return new WaitForSeconds(spawnInfo.NextSpawnTime);
+                foreach (var spawnInfo in currentWaveInfo.SpawnInfos)
+                {
+                    SpawnEnemy(spawnInfo);
+
+                    yield return new WaitForSeconds(spawnInfo.NextSpawnTime);
+                }
+
+                yield return new WaitUntil(() => currentWaveEnemyAmount == enemyDieAmount);
+
+                Wavefinish();
+
+                yield return new WaitForSeconds(preparingTime);
+                yield return new WaitUntil(() => !IsPreparing);
             }
-
-            yield return new WaitUntil(() => currentWaveEnemyAmount == enemyDieAmount);
-
-            Wavefinish();
-
-            yield return new WaitForSeconds(preparingTime);
-            yield return new WaitUntil(() => !isPreparing);
         }
-    }
 
-    void SpawnEnemy(SpawnInfo spawnInfo)
-    {
-        for(int i =0; i < spawnInfo.EnemyAmount; i++)
+        void SpawnEnemy(SpawnInfo spawnInfo)
         {
-            GameObject SpawnPoint = GameObject.Find(spawnInfo.SpawnPos);
-            var enemy = PhotonNetwork.Instantiate(Path.Combine("Photonprefabs", "enemy", spawnInfo.EnemyId), SpawnPoint.transform.position, SpawnPoint.transform.rotation, 0, new object[] { PV.ViewID });
+            for (int i = 0; i < spawnInfo.EnemyAmount; i++)
+            {
+                GameObject SpawnPoint = GameObject.Find(spawnInfo.SpawnPos);
+                var enemy = PhotonNetwork.Instantiate(Path.Combine("Photonprefabs", "enemy", spawnInfo.EnemyId), SpawnPoint.transform.position, SpawnPoint.transform.rotation, 0, new object[] { PV.ViewID });
 
-            enemy.GetComponent<EnemyStat>().OnEnemyDieCallback += OnEnemyDie;
+                enemy.GetComponent<EnemyStat>().OnEnemyDieCallback += OnEnemyDie;
+            }
+        }
+
+        void OnEnemyDie()
+        {
+            enemyDieAmount++;
+        }
+
+        void Wavefinish()
+        {
+            Debug.Log($"============= Wave {currentWave + 1} / {waveAmount} Complete ==============");
+
+            currentWave++;
+            currentWavetimer = 0f;
+            enemyDieAmount = 0;
+
+            randomBuffController.PopulateRandomBuffCard();
         }
     }
 
-    void OnEnemyDie()
-    {
-        enemyDieAmount++;
-    }
-
-    void Wavefinish()
-    {
-        Debug.Log($"============= Wave {currentWave+1} / {waveAmount} Complete ==============");
-
-        currentWave++;
-        currentWavetimer = 0f;
-        enemyDieAmount = 0;
-    }
 }
