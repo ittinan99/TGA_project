@@ -128,7 +128,6 @@ namespace TGA.Gameplay
 
         public void PopulateRandomBuffCard()
         {
-            randomBuffCanvas.SetActive(true);
             enemySpawnManager.IsPreparing = true;
             Cursor.lockState = CursorLockMode.None;
 
@@ -152,6 +151,8 @@ namespace TGA.Gameplay
         [PunRPC]
         private void RPC_PopulateRandomBuffCard(string randomGoodBuffIds, string randomBadBuffIds)
         {
+            randomBuffCanvas.SetActive(true);
+
             List<string> goodBuffIdList = randomGoodBuffIds.Split(',').ToList();
             List<string> badBuffIdList = randomBadBuffIds.Split(',').ToList();
 
