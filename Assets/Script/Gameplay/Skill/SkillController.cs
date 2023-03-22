@@ -13,35 +13,33 @@ using System.IO;
 public class SkillController : MonoBehaviour
 {
     private SkillInfo firstSkill;
-    [SerializeField]
-    private SkillInfoConfig firstSkillConfig;
+    [SerializeField] private SkillInfoConfig firstSkillConfig;
 
     private SkillInfo secondSkill;
-    [SerializeField]
-    private SkillInfoConfig secondSkillConfig;
+    [SerializeField] private SkillInfoConfig secondSkillConfig;
 
     private SkillInfo thirdSkill;
-    [SerializeField]
-    private SkillInfoConfig thirdSkillConfig;
+    [SerializeField] private SkillInfoConfig thirdSkillConfig;
 
     [Header("Input")]
     [Space(5)]
 
-    [SerializeField]
-    private KeyCode firstSkillButton;
-    [SerializeField]
-    private KeyCode secondSkillButton;
-    [SerializeField]
-    private KeyCode thirdSkillButton;
+    [SerializeField] private KeyCode firstSkillButton;
+    [SerializeField] private KeyCode secondSkillButton;
+    [SerializeField] private KeyCode thirdSkillButton;
 
     [Header("UI")]
     [Space(5)]
-    [SerializeField]
-    private Image FirstSkillImage;
-    [SerializeField]
-    private Image SecondSkillImage;
-    [SerializeField]
-    private Image ThirdSkillImage;
+    [SerializeField] private GameObject chardDot;
+    [SerializeField] private Image FirstSkillImage;
+    [SerializeField] private Image FirstSkillImageCoolDown;
+    [SerializeField] private GameObject FirstSkillChardContainer;
+    [SerializeField] private Image SecondSkillImage;
+    [SerializeField] private Image SecondSkillImageCoolDown;
+    [SerializeField] private GameObject SecondSkillChardContainer;
+    [SerializeField] private Image ThirdSkillImage;
+    [SerializeField] private Image ThirdSkillImageCoolDown;
+    [SerializeField] private GameObject ThirdSkillChardContainer;
 
     private bool isFirstSkillOnCooldown;
     private bool isSecondSkillOnCooldown;
@@ -51,14 +49,11 @@ public class SkillController : MonoBehaviour
     private Coroutine SecondSkillCooldownCoroutine;
     private Coroutine ThirdSkillCooldownCoroutine;
 
-    [SerializeField]
-    private GameObject CurveBullet;
+    [SerializeField] private GameObject CurveBullet;
 
-    [SerializeField]
-    private GameObject FreezeRoarVFX;
+    [SerializeField] private GameObject FreezeRoarVFX;
 
-    [SerializeField]
-    private int inSightEnemyCount;
+    [SerializeField] private int inSightEnemyCount;
     private List<GameObject> EnemyList;
 
     PhotonView pv;
@@ -69,7 +64,8 @@ public class SkillController : MonoBehaviour
     }
     void Start()
     {
-
+        OnSetImageSkil();
+        CheckChardable();
     }
 
     void Update()
@@ -111,13 +107,14 @@ public class SkillController : MonoBehaviour
         //yield return new WaitUntil(() => firstSkillUsed)      If we have placing object skill need to check is object has deployed before cooldown
 
         isFirstSkillOnCooldown = true;
-        FirstSkillImage.fillAmount = 0;
-        var timer = 0f;
 
-        while(timer < firstSkillConfig.Cooldown)
+        FirstSkillImageCoolDown.fillAmount = 0;
+        var timer = firstSkillConfig.Cooldown;
+
+        while(timer > 0)
         {
-            FirstSkillImage.fillAmount = timer / firstSkillConfig.Cooldown;
-            timer += Time.deltaTime;
+            FirstSkillImageCoolDown.fillAmount = timer / firstSkillConfig.Cooldown;
+            timer -= Time.deltaTime;
             yield return null;
         }
 
@@ -130,13 +127,13 @@ public class SkillController : MonoBehaviour
         //yield return new WaitUntil(() => secondSkillUsed)      If we have placing object skill need to check is object has deployed before cooldown
 
         isSecondSkillOnCooldown = true;
-        SecondSkillImage.fillAmount = 0;
-        var timer = 0f;
+        SecondSkillImageCoolDown.fillAmount = 0;
+        var timer = secondSkillConfig.Cooldown;
 
-        while (timer < secondSkillConfig.Cooldown)
+        while (timer > 0)
         {
-            SecondSkillImage.fillAmount = timer / secondSkillConfig.Cooldown;
-            timer += Time.deltaTime;
+            SecondSkillImageCoolDown.fillAmount = timer / secondSkillConfig.Cooldown;
+            timer -= Time.deltaTime;
             yield return null;
         }
 
@@ -149,13 +146,14 @@ public class SkillController : MonoBehaviour
         //yield return new WaitUntil(() => secondSkillUsed)      If we have placing object skill need to check is object has deployed before cooldown
 
         isThirdSkillOnCooldown = true;
-        ThirdSkillImage.fillAmount = 0;
-        var timer = 0f;
+        ThirdSkillImageCoolDown.gameObject.SetActive(true);
+        ThirdSkillImageCoolDown.fillAmount = 0;
+        var timer = thirdSkillConfig.Cooldown;
 
-        while (timer < thirdSkillConfig.Cooldown)
+        while (timer > 0)
         {
-            ThirdSkillImage.fillAmount = timer / thirdSkillConfig.Cooldown;
-            timer += Time.deltaTime;
+            ThirdSkillImageCoolDown.fillAmount = timer / thirdSkillConfig.Cooldown;
+            timer -= Time.deltaTime;
             yield return null;
         }
 
@@ -311,4 +309,68 @@ public class SkillController : MonoBehaviour
 
         Destroy(b.gameObject);
     }
+
+    #region UI
+    void OnSetImageSkil()
+    {
+        FirstSkillImage.sprite = firstSkillConfig.SkillSprite;
+        SecondSkillImage.sprite = secondSkillConfig.SkillSprite;
+        ThirdSkillImage.sprite = thirdSkillConfig.SkillSprite;
+
+        FirstSkillImageCoolDown.sprite = firstSkillConfig.SkillSprite;
+        SecondSkillImageCoolDown.sprite = secondSkillConfig.SkillSprite;
+        ThirdSkillImageCoolDown.sprite = thirdSkillConfig.SkillSprite;
+
+        FirstSkillImageCoolDown.fillAmount = 0;
+        SecondSkillImageCoolDown.fillAmount = 0;
+        ThirdSkillImageCoolDown.fillAmount = 0;
+    }
+
+    void CheckChardable()
+    {
+        if (firstSkillConfig.chardable.ToString() == "Ja")
+        {
+            FirstSkillChardContainer.SetActive(true);
+            for (int i = 0; i < firstSkillConfig.chardCount; i++)
+            {
+                Instantiate(chardDot, FirstSkillChardContainer.transform);
+            }
+            var ui = FirstSkillChardContainer.GetComponent<RectTransform>();
+            Rect rect = ui.rect;
+            rect.width = ((10 * firstSkillConfig.chardCount) + 5);
+            ui.sizeDelta = new Vector2(((10 * firstSkillConfig.chardCount) + 5), rect.height);
+
+        }
+        else { SecondSkillChardContainer.SetActive(false); }
+
+        if (secondSkillConfig.chardable.ToString() == "Ja")
+        {
+            SecondSkillChardContainer.SetActive(true);
+            for (int i = 0; i < secondSkillConfig.chardCount; i++)
+            {
+                Instantiate(chardDot, SecondSkillChardContainer.transform);
+            }
+            var ui = SecondSkillChardContainer.GetComponent<RectTransform>();
+            Rect rect = ui.rect;
+            rect.width = ((10 * secondSkillConfig.chardCount) + 5);
+            ui.sizeDelta = new Vector2(((10 * secondSkillConfig.chardCount) + 5), rect.height);
+        }
+        else { SecondSkillChardContainer.SetActive(false); }
+
+        if (thirdSkillConfig.chardable.ToString() == "Ja")
+        {
+            ThirdSkillChardContainer.SetActive(true);
+            for (int i = 0; i < thirdSkillConfig.chardCount; i++)
+            {
+                Instantiate(chardDot, ThirdSkillChardContainer.transform);
+            }
+            var ui = ThirdSkillChardContainer.GetComponent<RectTransform>();
+            Rect rect = ui.rect;
+            rect.width = ((10 * thirdSkillConfig.chardCount) + 5);
+            ui.sizeDelta = new Vector2(((10 * thirdSkillConfig.chardCount) + 5), rect.height);
+
+        }
+        else { ThirdSkillChardContainer.SetActive(false); }
+    }
+    #endregion
 }
