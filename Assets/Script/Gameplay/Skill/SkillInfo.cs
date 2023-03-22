@@ -7,12 +7,6 @@ using UnityEngine;
 
 namespace TGA.GameData 
 {
-    [CreateAssetMenu(fileName = "New SkillConfig", menuName = "SkillConfig")]
-    public class SkinInfoConfig : ScriptableObject
-    {
-        public SkillInfo skillInfo;
-    }
-
     [Serializable]
     public class SkillInfo
     {
