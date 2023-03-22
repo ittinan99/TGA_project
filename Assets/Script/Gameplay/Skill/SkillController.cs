@@ -12,14 +12,17 @@ using System.IO;
 
 public class SkillController : MonoBehaviour
 {
-    [SerializeField]
     private SkillInfo firstSkill;
-
     [SerializeField]
+    private SkillInfoConfig firstSkillConfig;
+
     private SkillInfo secondSkill;
-
     [SerializeField]
+    private SkillInfoConfig secondSkillConfig;
+
     private SkillInfo thirdSkill;
+    [SerializeField]
+    private SkillInfoConfig thirdSkillConfig;
 
     [Header("Input")]
     [Space(5)]
@@ -50,6 +53,9 @@ public class SkillController : MonoBehaviour
 
     [SerializeField]
     private GameObject CurveBullet;
+
+    [SerializeField]
+    private GameObject FreezeRoarVFX;
 
     [SerializeField]
     private int inSightEnemyCount;
@@ -108,9 +114,9 @@ public class SkillController : MonoBehaviour
         FirstSkillImage.fillAmount = 0;
         var timer = 0f;
 
-        while(timer < firstSkill.Cooldown)
+        while(timer < firstSkillConfig.Cooldown)
         {
-            FirstSkillImage.fillAmount = timer / firstSkill.Cooldown;
+            FirstSkillImage.fillAmount = timer / firstSkillConfig.Cooldown;
             timer += Time.deltaTime;
             yield return null;
         }
@@ -127,9 +133,9 @@ public class SkillController : MonoBehaviour
         SecondSkillImage.fillAmount = 0;
         var timer = 0f;
 
-        while (timer < secondSkill.Cooldown)
+        while (timer < secondSkillConfig.Cooldown)
         {
-            SecondSkillImage.fillAmount = timer / secondSkill.Cooldown;
+            SecondSkillImage.fillAmount = timer / secondSkillConfig.Cooldown;
             timer += Time.deltaTime;
             yield return null;
         }
@@ -146,9 +152,9 @@ public class SkillController : MonoBehaviour
         ThirdSkillImage.fillAmount = 0;
         var timer = 0f;
 
-        while (timer < thirdSkill.Cooldown)
+        while (timer < thirdSkillConfig.Cooldown)
         {
-            ThirdSkillImage.fillAmount = timer / thirdSkill.Cooldown;
+            ThirdSkillImage.fillAmount = timer / thirdSkillConfig.Cooldown;
             timer += Time.deltaTime;
             yield return null;
         }
@@ -293,5 +299,16 @@ public class SkillController : MonoBehaviour
         {
             target.FreezeEnemy(4f);
         }
+
+        StartCoroutine(ShowFreezeRoarVFX());
+    }
+
+    IEnumerator ShowFreezeRoarVFX()
+    {
+        GameObject b = Instantiate(FreezeRoarVFX, transform.position, transform.rotation);
+
+        yield return new WaitForSeconds(4f);
+
+        Destroy(b.gameObject);
     }
 }

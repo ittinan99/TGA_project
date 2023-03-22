@@ -20,6 +20,8 @@ public class EnemyStat : AttackTarget, IDamagable<float>
 
     PhotonView pv;
 
+    private bool isDead;
+
     public float CurrentHealth
     {
         get
@@ -69,8 +71,10 @@ public class EnemyStat : AttackTarget, IDamagable<float>
     {
         currentHealth -= damage;
 
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && !isDead)
         {
+            isDead = true;
+
             OnEnemyDieCallback?.Invoke();
         }
     }
