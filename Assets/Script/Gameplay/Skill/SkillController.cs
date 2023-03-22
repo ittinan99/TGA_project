@@ -69,7 +69,6 @@ public class SkillController : MonoBehaviour
     }
     void Start()
     {
-
     }
 
     void Update()

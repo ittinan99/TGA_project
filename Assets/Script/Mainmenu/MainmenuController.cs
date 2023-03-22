@@ -4,10 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using TGA.Utilities;
 using System.Linq;
+using TGA.UI;
 
 public class MainmenuController : MonoBehaviour
 {
-    public static MainmenuController instance; 
+    public static MainmenuController instance;
+
+    public GameObject logoContent;
+    public GameObject mainmenuTimeline;
+    private bool isShowingMainmenu;
+    private LoadingPopup loadingPopup;
 
     [SerializeField]
     private Button playButton;
@@ -42,6 +48,8 @@ public class MainmenuController : MonoBehaviour
     {
         instance = this;
         SharedContext.Instance.Add(this);
+
+        loadingPopup = SharedContext.Instance.Get<LoadingPopup>();
     }
 
     void Start()
@@ -59,12 +67,21 @@ public class MainmenuController : MonoBehaviour
 
     void Update()
     {
-        
+        if(!isShowingMainmenu && Input.anyKey) 
+        {
+            mainmenuTimeline.SetActive(true);
+            logoContent.SetActive(false);
+        }
     }
 
     private void OnDestroy()
     {
         SharedContext.Instance.Remove(this);
+    }
+
+    public void FadeBlack()
+    {
+        loadingPopup.FadeBlack(false);
     }
 
     private void onClickPlayButton()
