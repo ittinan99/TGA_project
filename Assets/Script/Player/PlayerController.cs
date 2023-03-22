@@ -204,7 +204,7 @@ public class PlayerController : MonoBehaviourPunCallbacks,IDamageable
         }
         else { stateAnimation= PlayerController.EnumStateAnimation.Idle; }
 
-        Debug.Log(move);
+        //Debug.Log(move);
     }
 
     void jump()
