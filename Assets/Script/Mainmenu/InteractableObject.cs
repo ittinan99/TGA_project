@@ -6,6 +6,7 @@ public class InteractableObject : MonoBehaviour
 {
     private Outline outline;
     private bool isMouseOver;
+    private bool isShowing;
 
     [SerializeField]
     private GameObject vCam;
@@ -28,6 +29,9 @@ public class InteractableObject : MonoBehaviour
         if(isMouseOver && Input.GetMouseButton(0))
         {
             vCam.SetActive(true);
+            isShowing = true;
+            outline.OutlineWidth = 0;
+
             OnInteractWithObjectCallback?.Invoke();
         }
         else if(Input.GetMouseButton(1))
@@ -39,10 +43,13 @@ public class InteractableObject : MonoBehaviour
     private void DisableVCam()
     {
         vCam.SetActive(false);
+        isShowing = false;
     }
 
     private void OnMouseOver()
     {
+        if (isShowing) { return; }
+
         outline.OutlineWidth = 3;
         isMouseOver = true;
     }
