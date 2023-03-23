@@ -13,6 +13,10 @@ public class SkillInfoConfig : ScriptableObject
 
     public SkillTypeEnum SkillType;
 
+    public Chardable chardable;
+
+    public int chardCount;
+
     public int AvaliableLevel;
 
     public string PreviousSkillId;
