@@ -4,6 +4,7 @@ using UnityEngine;
 using TGA.GameData;
 using Photon.Pun;
 using System.IO;
+using TMPro;
 
 namespace TGA.Gameplay
 {
@@ -34,6 +35,12 @@ namespace TGA.Gameplay
         private Coroutine spawnEnemyCoroutine;
 
         PhotonView PV;
+
+        [Header("UI")]
+        [SerializeField] private TextMeshProUGUI waveText;
+        [SerializeField] private TextMeshProUGUI middleWaveText;
+        [SerializeField] private TextMeshProUGUI enemyAmountText;
+        [SerializeField] private Animator waveAnim;
 
         private void Awake()
         {
@@ -75,6 +82,7 @@ namespace TGA.Gameplay
                 currentWaveInfo = enemySpawnerConfig.waveInfos[currentWave];
                 currentWaveEnemyAmount = currentWaveInfo.EnemyWaveAmount;
 
+                setupWaveText();
                 foreach (var spawnInfo in currentWaveInfo.SpawnInfos)
                 {
                     SpawnEnemy(spawnInfo);
@@ -86,9 +94,18 @@ namespace TGA.Gameplay
 
                 Wavefinish();
 
-                yield return new WaitForSeconds(preparingTime);
                 yield return new WaitUntil(() => !IsPreparing);
+                yield return new WaitForSeconds(preparingTime);
             }
+        }
+
+        void setupWaveText()
+        {
+            waveText.text = $"WAVE {currentWave + 1}/{waveAmount}";
+            middleWaveText.text = $"WAVE {currentWave + 1}/{waveAmount}";
+            enemyAmountText.text = currentWaveEnemyAmount.ToString();
+
+            waveAnim.SetTrigger("wave");
         }
 
         void SpawnEnemy(SpawnInfo spawnInfo)
@@ -105,6 +122,7 @@ namespace TGA.Gameplay
         void OnEnemyDie()
         {
             enemyDieAmount++;
+            enemyAmountText.text = (currentWaveEnemyAmount - enemyDieAmount).ToString();
         }
 
         void Wavefinish()
