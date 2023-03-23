@@ -8,11 +8,18 @@ public class InteractableObject : MonoBehaviour
     private bool isMouseOver;
     private bool isShowing;
 
+    public float showTime;
+
     [SerializeField]
     private GameObject vCam;
 
+    [SerializeField]
+    private Animator canvasAnim;
+
     public delegate void OnInteractWithObject();
     public OnInteractWithObject OnInteractWithObjectCallback;
+
+    private Coroutine showCanvasCoroutine;
 
     private void Awake()
     {
@@ -31,13 +38,25 @@ public class InteractableObject : MonoBehaviour
             vCam.SetActive(true);
             isShowing = true;
             outline.OutlineWidth = 0;
+            showCanvas();
 
             OnInteractWithObjectCallback?.Invoke();
         }
         else if(Input.GetMouseButton(1))
         {
             DisableVCam();
+            hideCanvas();
         }
+    }
+
+    private void showCanvas()
+    {
+        canvasAnim.SetBool("show", true);
+    }
+
+    private void hideCanvas()
+    {
+        canvasAnim.SetBool("show", false);
     }
 
     private void DisableVCam()
