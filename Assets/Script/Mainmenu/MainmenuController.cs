@@ -51,6 +51,7 @@ public class MainmenuController : MonoBehaviour
     [SerializeField] GameObject mainMenuWorldCanvas;
 
     [SerializeField] private Button NewcreateRoomtitle;
+    [SerializeField] private Button NewJoinbutton;
 
     private void Awake()
     {
@@ -67,13 +68,16 @@ public class MainmenuController : MonoBehaviour
         errorbutton.onClick.AddListener(onClickReturntoMenu);
         findroombutton.onClick.AddListener(onClickFindRoomButton);
         createRoomtitle.onClick.AddListener(onClickCreateRoomtitle);
-
-        NewcreateRoomtitle.onClick.AddListener(onClickCreateRoomtitle);
-
         startgamebutton.onClick.AddListener(onClickStartgame);
         createRoom.onClick.AddListener(onClickCreateRoom);
         leaveRoom.onClick.AddListener(onLeaveRoom);
         backfindroom.onClick.AddListener(onClickReturntoMenu);
+
+
+        NewcreateRoomtitle.onClick.AddListener(onClickCreateRoomtitle);
+        NewJoinbutton.onClick.AddListener(onClickFindRoomButton);
+
+
     }
 
     void Update()
@@ -84,10 +88,6 @@ public class MainmenuController : MonoBehaviour
             logoContent.SetActive(false);
         }
 
-        if (Input.GetKey(KeyCode.E))
-        {
-
-        }
     }
 
 
@@ -118,12 +118,9 @@ public class MainmenuController : MonoBehaviour
 
     private void onClickFindRoomButton()
     {
-        OpenMenu("findroom");
-    }
-
-    public void OnPointerClick()
-    {
-
+        //OpenMenu("findroom");
+        Uitranform uitran = NewcreateRoomtitle.GetComponentInParent<Uitranform>();
+        uitran.onUiClose();
     }
 
     private void onClickCreateRoomtitle()
