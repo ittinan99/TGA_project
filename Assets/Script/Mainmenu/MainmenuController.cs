@@ -5,6 +5,9 @@ using UnityEngine.UI;
 using TGA.Utilities;
 using System.Linq;
 using TGA.UI;
+using UnityEditor;
+using UnityEngine.EventSystems;
+
 
 public class MainmenuController : MonoBehaviour
 {
@@ -44,6 +47,11 @@ public class MainmenuController : MonoBehaviour
 
     [SerializeField] Menu[] menus;
 
+
+    [SerializeField] GameObject mainMenuWorldCanvas;
+
+    [SerializeField] private Button NewcreateRoomtitle;
+
     private void Awake()
     {
         instance = this;
@@ -59,6 +67,9 @@ public class MainmenuController : MonoBehaviour
         errorbutton.onClick.AddListener(onClickReturntoMenu);
         findroombutton.onClick.AddListener(onClickFindRoomButton);
         createRoomtitle.onClick.AddListener(onClickCreateRoomtitle);
+
+        NewcreateRoomtitle.onClick.AddListener(onClickCreateRoomtitle);
+
         startgamebutton.onClick.AddListener(onClickStartgame);
         createRoom.onClick.AddListener(onClickCreateRoom);
         leaveRoom.onClick.AddListener(onLeaveRoom);
@@ -72,7 +83,13 @@ public class MainmenuController : MonoBehaviour
             mainmenuTimeline.SetActive(true);
             logoContent.SetActive(false);
         }
+
+        if (Input.GetKey(KeyCode.E))
+        {
+
+        }
     }
+
 
     private void OnDestroy()
     {
@@ -104,9 +121,16 @@ public class MainmenuController : MonoBehaviour
         OpenMenu("findroom");
     }
 
+    public void OnPointerClick()
+    {
+
+    }
+
     private void onClickCreateRoomtitle()
     {
-        OpenMenu("createroom");
+        //OpenMenu("createroom");
+        Uitranform uitran = NewcreateRoomtitle.GetComponentInParent<Uitranform>();
+        uitran.onUiClose();
     }
 
     private void onClickCreateRoom()
@@ -154,4 +178,9 @@ public class MainmenuController : MonoBehaviour
     {
         menu.Close();
     }
+
+    //public void OnPointerClick(PointerEventData eventData)
+    //{
+    //    ((IPointerClickHandler)instance).OnPointerClick(eventData);
+    //}
 }
