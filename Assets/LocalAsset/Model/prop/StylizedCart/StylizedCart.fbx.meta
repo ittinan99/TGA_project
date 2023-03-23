@@ -3,7 +3,12 @@ guid: d7ca1cfec879b18439a57deca8d77dbc
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: StylizedCart
+    second: {fileID: 2100000, guid: e17ee447d86e63d49b88466f0b90febb, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
