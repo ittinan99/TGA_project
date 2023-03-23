@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviourPunCallbacks,IDamageable
 
     [SerializeField] Image healthbarImage;
     [SerializeField] GameObject ui;
-    [SerializeField] GameObject skillUI;
     [SerializeField] GameObject playerModel;
 
     [SerializeField] GameObject cameraHolder;
@@ -42,7 +41,7 @@ public class PlayerController : MonoBehaviourPunCallbacks,IDamageable
 
     PlayerManager playerManager;
 
-    Animator animator;
+    [SerializeField] Animator animator;
 
     private void Awake()
     {
@@ -74,16 +73,16 @@ public class PlayerController : MonoBehaviourPunCallbacks,IDamageable
             Destroy(GetComponentInChildren<Camera>().gameObject);
             Destroy(rb);
             Destroy(ui);
-            Destroy(skillUI);
         }
-            
     }
 
     private void Update()
     {
 
         if (!pv.IsMine)
+        {
             return;
+        }
 
         PlayAnimation(stateAnimation.ToString());
         CheckMoving(moveAmount);

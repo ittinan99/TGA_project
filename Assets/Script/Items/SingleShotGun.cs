@@ -35,7 +35,6 @@ public class SingleShotGun : Gun
     {
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f));
         ray.origin = cam.transform.position;
-        //Debug.DrawRay(ray.origin, ray.direction, Color.red, 1f);
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
@@ -49,39 +48,6 @@ public class SingleShotGun : Gun
             pv.RPC("RPC_Shoot", RpcTarget.All, hit.point, hit.normal);
         }
     }
-
-    //void Shoot()
-    //{
-    //    if (LastShootTime + shootDelay < Time.deltaTime)
-    //    {
-    //        Vector3 direction = GetDirection();
-
-    //        if (Physics.Raycast(bulletSpawnPoint.position, direction, out RaycastHit hit, float.MaxValue, mask))
-    //        {
-    //            TrailRenderer trail = Instantiate(bulletTrail, bulletSpawnPoint.position, Quaternion.identity);
-
-    //            StartCoroutine(SpawnTrail(trail, hit));
-
-    //            LastShootTime = Time.time;
-    //            Debug.Log("Shoot");
-    //        }
-    //        pv.RPC("RPC_Shoot", RpcTarget.All, hit.point, hit.normal);
-    //    }
-    //}
-
-    //private Vector3 GetDirection()
-    //{
-    //    Vector3 direction = Vector3.forward;
-
-    //    if (addBulletSpread)
-    //    {
-    //        direction += new Vector3(0.5f, 0.5f, 0.5f);
-
-    //        direction.Normalize();
-    //    }
-
-    //    return direction;
-    //}
 
     private IEnumerator SpawnTrail(TrailRenderer trail, RaycastHit hit)
     {

@@ -44,5 +44,10 @@ namespace TGA.GameData
         Active,
         Passive
     }
-}
 
+    public enum Chardable
+    {
+        Nein,
+        Ja
+    }
+}
