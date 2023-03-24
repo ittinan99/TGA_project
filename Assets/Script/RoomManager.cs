@@ -9,13 +9,19 @@ public class RoomManager : MonoBehaviourPunCallbacks
 {
     public static RoomManager instance;
 
+    [SerializeField] RoomManager[] roomManagers= null;
     private void Awake()
     {
-        if (instance)
+        roomManagers = FindObjectsOfType<RoomManager>();
+
+        if (roomManagers.Length > 1)
         {
-            Destroy(gameObject);
-            return;
+            for(int i =0;i < roomManagers.Length - 1; i++)
+            {
+                Destroy(roomManagers[i].gameObject);
+            }
         }
+
         DontDestroyOnLoad(gameObject);
         instance = this;
     }
@@ -30,9 +36,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    void OnSceneLoaded(Scene scene,LoadSceneMode loadSceneMode)
+    void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-        if(scene.buildIndex == 2)
+        if (scene.buildIndex == 2)
         {
             PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "PlayerManager"), Vector3.zero, Quaternion.identity);
         }
