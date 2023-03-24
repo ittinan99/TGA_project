@@ -52,6 +52,11 @@ public class MainmenuController : MonoBehaviour
 
     [SerializeField] private Button NewcreateRoomtitle;
     [SerializeField] private Button NewJoinbutton;
+    [SerializeField] private Button NewCreateRoom;
+    [SerializeField] private Button NewStartGame;
+
+    [SerializeField] private Button BackCreateRoom;
+    [SerializeField] private Button BackfindRoon;
 
     private void Awake()
     {
@@ -76,6 +81,11 @@ public class MainmenuController : MonoBehaviour
 
         NewcreateRoomtitle.onClick.AddListener(onClickCreateRoomtitle);
         NewJoinbutton.onClick.AddListener(onClickFindRoomButton);
+        NewCreateRoom.onClick.AddListener(onClickCreateRoom);
+        NewStartGame.onClick.AddListener(onClickStartgame);
+
+        BackCreateRoom.onClick.AddListener(onClickReturntoMenu);
+        BackfindRoon.onClick.AddListener(onClickReturntoMenu);
 
 
     }
@@ -113,19 +123,22 @@ public class MainmenuController : MonoBehaviour
 
     private void onClickReturntoMenu()
     {
-        OpenMenu("title");
+        //OpenMenu("title");
+        Uitranform uitran = NewcreateRoomtitle.GetComponentInParent<Uitranform>();
+        uitran.onUIOpen();
+        CloseAllMenu();
     }
 
     private void onClickFindRoomButton()
     {
-        //OpenMenu("findroom");
+        OpenMenu("findroom");
         Uitranform uitran = NewcreateRoomtitle.GetComponentInParent<Uitranform>();
         uitran.onUiClose();
     }
 
     private void onClickCreateRoomtitle()
     {
-        //OpenMenu("createroom");
+        OpenMenu("createroom");
         Uitranform uitran = NewcreateRoomtitle.GetComponentInParent<Uitranform>();
         uitran.onUiClose();
     }
@@ -176,8 +189,14 @@ public class MainmenuController : MonoBehaviour
         menu.Close();
     }
 
-    //public void OnPointerClick(PointerEventData eventData)
-    //{
-    //    ((IPointerClickHandler)instance).OnPointerClick(eventData);
-    //}
+    public void CloseAllMenu()
+    {
+        for (int i = 0; i < menus.Length; i++)
+        {
+            if (menus[i].open)
+            {
+                CloseMenu(menus[i]);
+            }
+        }
+    }
 }
