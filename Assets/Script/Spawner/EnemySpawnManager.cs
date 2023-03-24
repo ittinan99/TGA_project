@@ -152,7 +152,7 @@ namespace TGA.Gameplay
 
             if (currentWave == waveAmount)
             {
-                StartCoroutine(backToMainMenu());
+                PV.RPC("RPC_leaveRoom", RpcTarget.All);
             }
 
             randomBuffController.PopulateRandomBuffCard();
@@ -167,6 +167,12 @@ namespace TGA.Gameplay
             enemyAmountText.text = currentWaveEnemyAmount.ToString();
 
             waveAnim.SetTrigger("wave");
+        }
+
+        [PunRPC]
+        private void RPC_leaveRoom()
+        {
+            StartCoroutine(backToMainMenu());
         }
 
         IEnumerator backToMainMenu()
