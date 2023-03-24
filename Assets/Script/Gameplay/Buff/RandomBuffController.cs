@@ -19,14 +19,17 @@ namespace TGA.Gameplay
         [SerializeField]
         private List<RandomBuffCard> BadBuffList;
 
-        private List<string> randGoodBuffList = new List<string>();
-        private List<string> randBadBuffList = new List<string>();
+        public List<string> randGoodBuffList = new List<string>();
+        public List<string> randBadBuffList = new List<string>();
 
         [Space(10)]
 
         [Header("Container")]
         [SerializeField]
         private GameObject randomBuffCanvas;
+        [SerializeField]
+        private Animator randomBuffAnim;
+
         [SerializeField]
         private List<RandomBuffCardContainer> buffContainerList;
 
@@ -78,7 +81,6 @@ namespace TGA.Gameplay
             //    Shuffle       ======================
 
             shuffleCard();
-            randomBuffCanvas.SetActive(false);
         }
 
         private void shuffleCard()
@@ -108,8 +110,6 @@ namespace TGA.Gameplay
 
             var randomGoodBuffCard = GoodBuffList.Find(x => x.Id == goodBuffId);
 
-            randGoodBuffList.RemoveAll(x => x == goodBuffId);
-
             return randomGoodBuffCard;
         }
 
@@ -121,15 +121,12 @@ namespace TGA.Gameplay
 
             var randomBadBuffCard = BadBuffList.Find(x => x.Id == badBuffId);
 
-            randBadBuffList.RemoveAll(x => x == badBuffId);
-
             return randomBadBuffCard;
         }
 
         public void PopulateRandomBuffCard()
         {
             enemySpawnManager.IsPreparing = true;
-            Cursor.lockState = CursorLockMode.None;
 
             pickCardCoroutine = StartCoroutine(pickRandomBuffCard());
 
@@ -145,13 +142,21 @@ namespace TGA.Gameplay
             string randomGoodBuffIds = string.Join(',', goodBuffs);
             string randomBadBuffIds = string.Join(',', badBuffs);
 
+            StartCoroutine(waitForPopulateCard(randomGoodBuffIds, randomBadBuffIds));
+        }
+
+        IEnumerator waitForPopulateCard(string randomGoodBuffIds, string randomBadBuffIds)
+        {
+            yield return new WaitForSeconds(3f);
+
             PV.RPC("RPC_PopulateRandomBuffCard", RpcTarget.All, randomGoodBuffIds, randomBadBuffIds);
         }
 
         [PunRPC]
         private void RPC_PopulateRandomBuffCard(string randomGoodBuffIds, string randomBadBuffIds)
         {
-            randomBuffCanvas.SetActive(true);
+            randomBuffAnim.SetBool("show", true);
+            Cursor.lockState = CursorLockMode.None;
 
             List<string> goodBuffIdList = randomGoodBuffIds.Split(',').ToList();
             List<string> badBuffIdList = randomBadBuffIds.Split(',').ToList();
@@ -184,7 +189,6 @@ namespace TGA.Gameplay
         private void FinishPickRandomCard()
         {
             enemySpawnManager.IsPreparing = false;
-            Cursor.lockState = CursorLockMode.Locked;
 
             float playerCount = GameObject.FindGameObjectsWithTag("Player").Length;
 
@@ -218,6 +222,9 @@ namespace TGA.Gameplay
                 }
             }
 
+            randGoodBuffList.RemoveAll(x => x == selectedCard.GoodBuffCard.Id);
+            randBadBuffList.RemoveAll(x => x == selectedCard.BadBuffCard.Id);
+
             // Add non selected card back to List
 
             foreach (var buffCard in selectedCards)
@@ -237,7 +244,15 @@ namespace TGA.Gameplay
 
             shuffleCard();
             ApplyEffectOfCard(selectedCard);
-            randomBuffCanvas.SetActive(false);
+
+            PV.RPC("RPC_FinishPickRandomCard", RpcTarget.All);
+        }
+
+        [PunRPC]
+        private void RPC_FinishPickRandomCard()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            randomBuffAnim.SetBool("show", false);
         }
 
         private void ApplyEffectOfCard(RandomBuffCardContainer cardContainer)

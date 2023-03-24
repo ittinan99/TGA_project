@@ -11,6 +11,12 @@ namespace TGA.Gameplay
 {
     public class RandomBuffCardContainer : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,IPointerClickHandler
     {
+        [SerializeField] private Sprite copperSprite;
+        [SerializeField] private Sprite silverSprite;
+        [SerializeField] private Sprite goldSprite;
+
+        [SerializeField] private Image bannerImage;
+
         [Header("Good Buff")]
 
         public RandomBuffCard GoodBuffCard;
@@ -26,11 +32,15 @@ namespace TGA.Gameplay
 
         public int Selected;
         private bool isClicked;
-        [SerializeField] private TextMeshProUGUI SelectedText;
 
         private PhotonView pv;
         private RectTransform rt;
         private RandomBuffController randomBuffController;
+
+        [SerializeField] private GameObject oneSelected;
+        [SerializeField] private GameObject twoSelected;
+        [SerializeField] private GameObject threeSelected;
+        [SerializeField] private GameObject fourSelected;
 
         private void Start()
         {
@@ -41,12 +51,11 @@ namespace TGA.Gameplay
 
         private void Update()
         {
-            SelectedText.text = Selected.ToString();
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            rt.transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
+            rt.transform.localScale = new Vector3(1.1f, 1.1f, 1);
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -82,6 +91,7 @@ namespace TGA.Gameplay
         private void RPC_UpdateSelected()
         {
             Selected++;
+            updateSelectedSprite();
         }
 
         public void Deselected()
@@ -96,6 +106,32 @@ namespace TGA.Gameplay
             if (Selected > 0)
             {
                 Selected--;
+                updateSelectedSprite();
+            }
+        }
+
+        void updateSelectedSprite()
+        {
+            fourSelected.SetActive(false);
+            threeSelected.SetActive(false);
+            twoSelected.SetActive(false);
+            oneSelected.SetActive(false);
+
+            if (Selected == 4)
+            {
+                fourSelected.SetActive(true);
+            }
+            else if (Selected == 3)
+            {
+                threeSelected.SetActive(true);
+            }
+            else if(Selected == 2)
+            {
+                twoSelected.SetActive(true);
+            }
+            else if(Selected == 1)
+            {
+                oneSelected.SetActive(true);
             }
         }
 
@@ -104,11 +140,24 @@ namespace TGA.Gameplay
             GoodBuffCard = goodBuffCard;
             BadBuffCard = badBuffCard;
 
-            goodBuffName.text = goodBuffCard.name;
+            goodBuffName.text = goodBuffCard.Name;
             goodBuffDescription.text = goodBuffCard.Description;
 
-            badBuffName.text = badBuffCard.name;
+            badBuffName.text = badBuffCard.Name;
             badBuffDescription.text = badBuffCard.Description;
+
+            if (goodBuffCard.Rarity == 3)
+            {
+                bannerImage.sprite = copperSprite;
+            }
+            else if (goodBuffCard.Rarity == 2)
+            {
+                bannerImage.sprite = silverSprite;
+            }
+            else
+            {
+                bannerImage.sprite = goldSprite;
+            }
         }
     }
 }

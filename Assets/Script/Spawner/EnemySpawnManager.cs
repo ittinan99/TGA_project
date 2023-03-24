@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TGA.GameData;
@@ -40,6 +40,7 @@ namespace TGA.Gameplay
         [SerializeField] private TextMeshProUGUI waveText;
         [SerializeField] private TextMeshProUGUI middleWaveText;
         [SerializeField] private TextMeshProUGUI enemyAmountText;
+        [SerializeField] private TextMeshProUGUI enemyTitleText;
         [SerializeField] private Animator waveAnim;
 
         private void Awake()
@@ -101,6 +102,13 @@ namespace TGA.Gameplay
 
         void setupWaveText()
         {
+            PV.RPC("RPC_setupWaveText", RpcTarget.All, currentWave, waveAmount, currentWaveEnemyAmount);
+        }
+
+        [PunRPC]
+        private void RPC_setupWaveText(int currentWave,int waveAmount, int currentWaveEnemyAmount)
+        {
+            enemyTitleText.text = "ศัตรูกำลังมา";
             waveText.text = $"WAVE {currentWave + 1}/{waveAmount}";
             middleWaveText.text = $"WAVE {currentWave + 1}/{waveAmount}";
             enemyAmountText.text = currentWaveEnemyAmount.ToString();
@@ -122,18 +130,50 @@ namespace TGA.Gameplay
         void OnEnemyDie()
         {
             enemyDieAmount++;
-            enemyAmountText.text = (currentWaveEnemyAmount - enemyDieAmount).ToString();
+            int enemyRemain = (currentWaveEnemyAmount - enemyDieAmount);
+            PV.RPC("RPC_enemyAmountText", RpcTarget.All, enemyRemain);
+        }
+
+        [PunRPC]
+        private void RPC_enemyAmountText(int enemyAmount)
+        {
+            enemyAmountText.text = enemyAmount.ToString();
         }
 
         void Wavefinish()
         {
             Debug.Log($"============= Wave {currentWave + 1} / {waveAmount} Complete ==============");
 
+            PV.RPC("RPC_finishWave", RpcTarget.All, currentWave, waveAmount, currentWaveEnemyAmount);
+
             currentWave++;
             currentWavetimer = 0f;
             enemyDieAmount = 0;
 
+            if (currentWave == waveAmount)
+            {
+                StartCoroutine(backToMainMenu());
+            }
+
             randomBuffController.PopulateRandomBuffCard();
+        }
+
+        [PunRPC]
+        private void RPC_finishWave(int currentWave, int waveAmount, int currentWaveEnemyAmount)
+        {
+            enemyTitleText.text = "ปราบสำเร็จ";
+            waveText.text = $"WAVE {currentWave + 1}/{waveAmount}";
+            middleWaveText.text = $"WAVE {currentWave + 1}/{waveAmount}";
+            enemyAmountText.text = currentWaveEnemyAmount.ToString();
+
+            waveAnim.SetTrigger("wave");
+        }
+
+        IEnumerator backToMainMenu()
+        {
+            yield return new WaitForSeconds(3f);
+
+            PhotonNetwork.LoadLevel(1);
         }
     }
 

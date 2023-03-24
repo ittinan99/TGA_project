@@ -68,6 +68,8 @@ public class EnemyController : MonoBehaviour
 
     private PhotonView pv;
 
+    public bool IsDead;
+
     private void Awake()
     {
         pv = GetComponent<PhotonView>();
@@ -164,6 +166,12 @@ public class EnemyController : MonoBehaviour
     public void SetDieAnimation(bool status)
     {
         animController.SetBool("die", status);
+        IsDead = status;
+
+        if (IsDead && PhotonNetwork.LocalPlayer.IsMasterClient)
+        {
+            StartCoroutine(DestroyEnemy());
+        }
     }
 
     public void SetScreamTrigger()
@@ -260,5 +268,12 @@ public class EnemyController : MonoBehaviour
         SetAnimationSpeed(1f);
         SetAnimatorStatus(true);
         OnEnemyFreezeCallback?.Invoke(false);
+    }
+
+    IEnumerator DestroyEnemy()
+    {
+        yield return new WaitForSeconds(5f);
+
+        PhotonNetwork.Destroy(this.gameObject);
     }
 }

@@ -219,7 +219,8 @@ public class SkillController : MonoBehaviour
 
         var allTarget = GameObject.FindGameObjectsWithTag("Enemy");
 
-        var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<EnemyController>().Renderer.isVisible);
+        var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<EnemyController>().Renderer.isVisible &&
+                                                                           !x.GetComponent<EnemyController>().IsDead);
 
         var enemyTarget = new List<EnemyController>();
 
@@ -256,7 +257,9 @@ public class SkillController : MonoBehaviour
     {
         var allTarget = GameObject.FindGameObjectsWithTag("Enemy");
 
-        var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<EnemyController>().Renderer.isVisible);
+        var inSightTarget = new List<GameObject>(allTarget).FindAll((x) => x.GetComponent<EnemyController>().Renderer.isVisible &&
+                                                                           !x.GetComponent<EnemyController>().IsDead &&
+                                                                           x.GetComponent<EnemyController>().distance < 15);
 
         var enemyTarget = new List<EnemyController>();
 
