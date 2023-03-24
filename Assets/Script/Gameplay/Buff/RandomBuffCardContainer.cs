@@ -151,6 +151,7 @@ namespace TGA.Gameplay
             badBuffImage.sprite = badBuffCard.Sprite;
 
             Selected = 0;
+            isClicked = false;
             updateSelectedSprite();
 
             if (goodBuffCard.Rarity == 3)
