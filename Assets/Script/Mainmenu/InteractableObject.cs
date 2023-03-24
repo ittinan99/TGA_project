@@ -42,13 +42,17 @@ public class InteractableObject : MonoBehaviour
 
             OnInteractWithObjectCallback?.Invoke();
         }
-        else if(Input.GetMouseButton(1))
-        {
-            DisableVCam();
-            hideCanvas();
-        }
+        //else if(Input.GetMouseButton(1))
+        //{
+        //    DisableVCam();
+        //    hideCanvas();
+        //}
     }
-
+    public void Hide()
+    {
+        DisableVCam();
+        hideCanvas();
+    }
     private void showCanvas()
     {
         canvasAnim.SetBool("show", true);
