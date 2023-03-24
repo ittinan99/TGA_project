@@ -173,6 +173,7 @@ namespace TGA.Gameplay
         {
             yield return new WaitForSeconds(3f);
 
+            PhotonNetwork.LeaveRoom();
             PhotonNetwork.LoadLevel(1);
         }
     }

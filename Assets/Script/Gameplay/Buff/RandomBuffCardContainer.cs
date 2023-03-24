@@ -22,6 +22,7 @@ namespace TGA.Gameplay
         public RandomBuffCard GoodBuffCard;
         [SerializeField] private TextMeshProUGUI goodBuffName;
         [SerializeField] private TextMeshProUGUI goodBuffDescription;
+        [SerializeField] private Image goodBuffImage;
         [Space(10)]
 
         [Header("Bad Buff")]
@@ -29,6 +30,7 @@ namespace TGA.Gameplay
         public RandomBuffCard BadBuffCard;
         [SerializeField] private TextMeshProUGUI badBuffName;
         [SerializeField] private TextMeshProUGUI badBuffDescription;
+        [SerializeField] private Image badBuffImage;
 
         public int Selected;
         private bool isClicked;
@@ -67,7 +69,7 @@ namespace TGA.Gameplay
         {
             if (isClicked)
             {
-                pv.RPC("RPC_UpdateDeselected", RpcTarget.All);
+                Deselected();
             }
             else
             {
@@ -142,9 +144,14 @@ namespace TGA.Gameplay
 
             goodBuffName.text = goodBuffCard.Name;
             goodBuffDescription.text = goodBuffCard.Description;
+            goodBuffImage.sprite = goodBuffCard.Sprite;
 
             badBuffName.text = badBuffCard.Name;
             badBuffDescription.text = badBuffCard.Description;
+            badBuffImage.sprite = badBuffCard.Sprite;
+
+            Selected = 0;
+            updateSelectedSprite();
 
             if (goodBuffCard.Rarity == 3)
             {

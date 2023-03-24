@@ -13,6 +13,7 @@ namespace TGA.Gameplay
         public StatusTypeEnum StatusType;
         public StatusSubTypeEnum StatusSubType;
         public TargetEnum TargetType;
+        public Sprite Sprite;
         public float StatusRatio;
         public int Rarity;
     }
